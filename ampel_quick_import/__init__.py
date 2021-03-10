@@ -41,15 +41,14 @@ def quickimport(clsname, local_ns=None):
 		os.chdir(d)
 		a = glob.glob("**/" + clsname + ".py", recursive=True)
 		if len(a) != 0:
-			clsimport(
-				re.sub(
-					".*\.ampel\.", # noqa
-					"ampel.",
-					a[0] \
-						.replace("/", ".") \
-						.replace(".py", "")
-				),
-				local_ns
+			s = re.sub(
+				".*\.ampel\.", # noqa
+				"ampel.",
+				a[0] \
+					.replace("/", ".") \
+					.replace(".py", "")
 			)
+			print(f"from {s} import {clsname}")
+			clsimport(s, local_ns)
 			return
 	print(f"Class {clsname} not found")
