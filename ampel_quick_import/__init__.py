@@ -36,7 +36,7 @@ def qi(line, local_ns):
 
 def quickimport(clsname, local_ns=None):
 
-
+	cwd = os.getcwd()
 	for d in ampel_folders:
 		os.chdir(d)
 		a = glob.glob("**/" + clsname + ".py", recursive=True)
@@ -50,5 +50,7 @@ def quickimport(clsname, local_ns=None):
 			)
 			print(f"from {s} import {clsname}")
 			clsimport(s, local_ns)
+			os.chdir(cwd)
 			return
 	print(f"Class {clsname} not found")
+	os.chdir(cwd)
