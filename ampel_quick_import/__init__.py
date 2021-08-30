@@ -1,8 +1,24 @@
-import importlib, glob, os, re, pkg_resources
+import importlib, glob, os, re, pkg_resources, pathlib
 from IPython.core.magic import needs_local_scope, register_line_magic # type: ignore
 
+def _get_module_path(distribution):
+	if isinstance(distribution, pkg_resources.EggInfoDistribution):
+		return os.path.dirname(distribution.module_path)
+	elif isinstance(distribution, pkg_resources.DistInfoDistribution):
+		# if the distribution installed a .pth file, assume this points to the editable install
+		for line in distribution.get_metadata_lines("RECORD"):
+			path, hash, size = line.split(",")
+			if path.endswith(".pth"):
+				with open(path) as pth:
+					return pth.readline().strip()
+		# fall back to the importable location (wheel install)
+		return distribution.location
+	else:
+		raise TypeError(f"Unsupported distribution type {type(distribution)} {distribution}")
+
+
 ampel_folders = {
-	os.path.dirname(pkg_resources.get_distribution(dist_name).module_path) # type: ignore
+	_get_module_path(pkg_resources.get_distribution(dist_name)) # type: ignore
 	for dist_name in pkg_resources.AvailableDistributions() # type: ignore
 	if dist_name.startswith("pyampel") or dist_name.startswith("ampel-")
 }
