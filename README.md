@@ -5,7 +5,7 @@ Allows to quickly import any ampel unit using `%qi unit_name`
 
 # Install
 
-1) `pip3 install Amel-ipython`
+1) `pip3 install ampel-ipython`
 
 2) Use:
 
