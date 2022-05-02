@@ -9,7 +9,7 @@ def _get_module_path(distribution):
 		for line in distribution.get_metadata_lines("RECORD"):
 			path, hash, size = line.split(",")
 			if path.endswith(".pth"):
-				with open(path) as pth:
+				with open(path if os.path.isfile(path) else distribution.get_resource_filename(__name__, path)) as pth:
 					return pth.readline().strip()
 		# fall back to the importable location (wheel install)
 		return distribution.location
