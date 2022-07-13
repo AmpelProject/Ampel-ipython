@@ -15,7 +15,12 @@ Allows to quickly import any ampel unit using `%qi unit_name`
 
 <kbd>![alt text](https://github.com/AmpelProject/Ampel-ipython/blob/doc/ampel_qi.gif?raw=true)</kbd>
 
- 
+```
+%qr ClassName
+```
+
+ <kbd>![alt text](https://github.com/AmpelProject/Ampel-ipython/blob/doc/ampel_qr.gif?raw=true)</kbd>
+
 # Autoload
 To load `ampel_quick_import` automatically when `ipython` starts:
 
