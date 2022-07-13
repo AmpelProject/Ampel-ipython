@@ -1,5 +1,15 @@
-import importlib, glob, os, re, pkg_resources, pathlib
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# File:                Ampel-ipython/ampel_quick_import/__init__.py
+# License:             BSD-3-Clause
+# Author:              valery brinnel <firstname.lastname@gmail.com>
+# Date:                Unspecified
+# Last Modified Date:  13.07.2022
+# Last Modified By:    valery brinnel <firstname.lastname@gmail.com>
+
+import importlib, glob, sys, os, re, pkg_resources, pathlib
 from IPython.core.magic import needs_local_scope, register_line_magic # type: ignore
+
 
 def _get_module_path(distribution):
 	if isinstance(distribution, pkg_resources.EggInfoDistribution):
@@ -50,6 +60,13 @@ def qi(line, local_ns):
 		quickimport(el, local_ns)
 
 
+@register_line_magic
+@needs_local_scope
+def qr(line, local_ns):
+	for el in line.split(" "):
+		quickreload(el, local_ns)
+
+
 def quickimport(clsname, local_ns=None):
 
 	cwd = os.getcwd()
@@ -70,3 +87,23 @@ def quickimport(clsname, local_ns=None):
 			return
 	print(f"Class {clsname} not found")
 	os.chdir(cwd)
+
+
+def quickreload(clsname, local_ns=None):
+
+	lcp = local_ns.copy()
+	for k, v in sys.modules.copy().items():
+		if k.startswith("ampel.") and k.endswith(f".{clsname}"):
+			for kk, vv in lcp.items():
+				try:
+					if kk != clsname and vv.__module__ == k:
+						print(f"Dropping local variable {kk}")
+						del local_ns[kk]
+				except:
+					pass
+
+			importlib.reload(sys.modules[k])
+			print(f"{k} reloaded")
+			return
+
+	print(f"{clsname} not loaded")
